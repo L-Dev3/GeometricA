@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>RA com Localização e Hiro</title>
+    <title>RA com Hiro e GPS</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- A-Frame e AR.js -->
@@ -14,13 +14,18 @@
   </head>
   <body>
     <a-scene
-      embedded
       vr-mode-ui="enabled: false"
       renderer="logarithmicDepthBuffer: true;"
+      embedded
       arjs="sourceType: webcam; gpsMinAccuracy: 100; gpsTimeInterval: 1000;"
     >
-      <!-- MARCADOR HIRO COM GPS ATIVO -->
-      <a-marker preset="hiro" gps-entity-place="latitude: -9.9746; longitude: -67.8243;">
+
+      <!-- MARCADOR HIRO ativado por localização -->
+      <a-marker
+        preset="hiro"
+        gps-entity-place="latitude: -9.9746; longitude: -67.8243;"
+        emitevents="true"
+      >
         <a-entity 
           gltf-model="meu_cubo_3D.glb"
           scale="3 3 3"
@@ -30,8 +35,13 @@
         </a-entity>
       </a-marker>
 
-      <!-- CÂMERA COM GPS -->
-      <a-entity camera gps-camera rotation-reader></a-entity>
+      <!-- CÂMERA correta -->
+      <a-entity 
+        camera 
+        gps-camera="minAccuracy: 100" 
+        rotation-reader>
+      </a-entity>
+
     </a-scene>
   </body>
 </html>
