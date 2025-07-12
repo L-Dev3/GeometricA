@@ -1,43 +1,37 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Cubo 3D Animado - RA com Hiro</title>
+    <title>RA com Localização e Hiro</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- A-Frame e AR.js -->
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
 
-    <!-- Estilo básico -->
     <style>
-      body, html {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-      }
+      body, html { margin: 0; padding: 0; overflow: hidden; }
     </style>
   </head>
   <body>
-    <!-- Cena A-Frame com AR.js -->
     <a-scene
       embedded
-      arjs="sourceType: webcam; debugUIEnabled: false;"
+      vr-mode-ui="enabled: false"
+      renderer="logarithmicDepthBuffer: true;"
+      arjs="sourceType: webcam; gpsMinAccuracy: 100; gpsTimeInterval: 1000;"
     >
-      <!-- Marcador Hiro -->
-      <a-marker preset="hiro">
-        
-        <!-- Modelo 3D com animação ativada -->
+      <!-- MARCADOR HIRO COM GPS ATIVO -->
+      <a-marker preset="hiro" gps-entity-place="latitude: -9.9746; longitude: -67.8243;">
         <a-entity 
           gltf-model="meu_cubo_3D.glb"
-          scale="2 2 2"
+          scale="3 3 3"
           position="0 0 0"
           rotation="0 0 0"
           animation-mixer>
         </a-entity>
-
       </a-marker>
 
-      <!-- Câmera -->
-      <a-entity camera></a-entity>
+      <!-- CÂMERA COM GPS -->
+      <a-entity camera gps-camera rotation-reader></a-entity>
     </a-scene>
   </body>
 </html>
