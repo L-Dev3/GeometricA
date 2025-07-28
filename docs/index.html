@@ -2,47 +2,134 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>Meu Cubo em RA</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-  <!-- Bibliotecas A-Frame e AR.js atualizadas -->
+  <title>RA com Login e Desafios</title>
+  <!-- A-Frame e AR.js -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
-
-  <style>
-    body { margin: 0; overflow: hidden; }
-  </style>
+  <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.0.1/aframe/build/aframe-ar.min.js"></script>
 </head>
+<body style="margin:0; overflow:hidden;">
 
-<body>
-  <a-scene
-    embedded
-    renderer="logarithmicDepthBuffer: true;"
-    arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: false;"
-  >
-    <!-- Carregando o modelo -->
-    <a-assets>
-      <a-asset-item id="modelo" src="Cubo2.0.glb"></a-asset-item>
-    </a-assets>
+<!-- LOGIN (tela cobrindo tudo no início) -->
+<div id="login" style="position:absolute; top:0; left:0; width:100%; height:100%; background:white; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10;">
+  <h2>Entrar</h2>
+  <input id="nome" placeholder="Seu nome">
+  <input id="senha" type="password" placeholder="Senha">
+  <button onclick="registrarOuEntrar()">Entrar</button>
+</div>
 
-    <!-- Modelo sobre o marcador Hiro -->
-    <a-marker preset="hiro">
-      <a-entity 
-        gltf-model="#modelo"
-        scale="0.5 0.5 0.5"
-        position="0 0 0"
-        animation-mixer>
-      </a-entity>
-    </a-marker>
+<!-- PAINEL DE INFORMAÇÕES -->
+<div id="painelInfo" style="position:absolute; right:0; top:0; width:30%; height:100%; background:rgba(0,0,0,0.8); color:white; padding:10px; display:none; z-index:5;">
+  <h3>Informações</h3>
+  <p id="textoInfo">Toque em um número no cubo.</p>
+  <button onclick="abrirDesafios()">Desafios dessa figura</button>
+</div>
 
-    <!-- Câmera -->
-    <a-entity camera></a-entity>
+<!-- BOTÃO DE DESAFIOS COM DROPDOWN -->
+<div style="position:absolute; top:10px; right:10px; z-index:6;">
+  <img src="https://cdn-icons-png.flaticon.com/512/1034/1034159.png" onclick="toggleDropdown()" style="width:40px; cursor:pointer;">
+  <div id="dropdown" style="display:none; background:white; border:1px solid #ccc; padding:10px;">
+    <button onclick="abrirDesafios()">Ir para Desafios</button>
+  </div>
+</div>
 
-    <!-- Iluminação -->
-    <a-light type="ambient" color="white" intensity="1"></a-light>
-    <a-light type="directional" color="white" intensity="1.5" position="-1 1 1"></a-light>
-    <a-light type="directional" color="white" intensity="1.5" position="1 1 1"></a-light>
-  </a-scene>
+<!-- A-FRAME SCENE + AR -->
+<a-scene embedded arjs>
+
+  <!-- MARCADOR HIRO -->
+  <a-marker preset="hiro">
+
+    <!-- MODELO 3D vindo do Blender -->
+    <a-entity id="modelo" gltf-model="#cuboGLB" position="0 0 0" scale="0.5 0.5 0.5"></a-entity>
+
+    <!-- Botões flutuantes -->
+    <a-text value="1" position="-1 1.5 0" color="white"
+            geometry="primitive: plane; height: 0.4; width: 0.4"
+            material="color: red; opacity: 0.8"
+            class="botao" data-info="O cubo tem 6 faces quadradas."></a-text>
+
+    <a-text value="2" position="0 1.5 0" color="white"
+            geometry="primitive: plane; height: 0.4; width: 0.4"
+            material="color: green; opacity: 0.8"
+            class="botao" data-info="O cubo tem 12 arestas."></a-text>
+
+    <a-text value="3" position="1 1.5 0" color="white"
+            geometry="primitive: plane; height: 0.4; width: 0.4"
+            material="color: blue; opacity: 0.8"
+            class="botao" data-info="O cubo tem 8 vértices."></a-text>
+
+  </a-marker>
+
+  <a-entity camera></a-entity>
+
+  <!-- ASSETS (carregamento do modelo .glb) -->
+  <a-assets>
+    <a-asset-item id="cuboGLB" src="cubo.glb"></a-asset-item>
+  </a-assets>
+
+</a-scene>
+
+<!-- SCRIPTS -->
+<script>
+  // Registro/Login
+  function registrarOuEntrar() {
+    const nome = document.getElementById("nome").value;
+    const senha = document.getElementById("senha").value;
+
+    let contas = JSON.parse(localStorage.getItem("contas") || "{}");
+
+    if (contas[nome]) {
+      if (contas[nome] !== senha) {
+        alert("Senha incorreta!");
+        return;
+      }
+    } else {
+      contas[nome] = senha;
+      localStorage.setItem("contas", JSON.stringify(contas));
+    }
+
+    localStorage.setItem("usuarioAtual", nome);
+    document.getElementById("login").style.display = "none";
+  }
+
+  // Abre painel lateral com informação do botão tocado
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll('.botao').forEach(botao => {
+      botao.addEventListener('click', function () {
+        const info = this.getAttribute('data-info');
+        document.getElementById("textoInfo").textContent = info;
+        document.getElementById("painelInfo").style.display = "block";
+      });
+    });
+  });
+
+  // Toggle dropdown de desafios
+  function toggleDropdown() {
+    const drop = document.getElementById("dropdown");
+    drop.style.display = drop.style.display === "none" ? "block" : "none";
+  }
+
+  // Abre desafios
+  function abrirDesafios() {
+    const usuario = localStorage.getItem("usuarioAtual");
+    const resposta = prompt("Quantas faces tem um cubo?");
+
+    if (resposta === "6") {
+      alert("Correto!");
+      salvarProgresso(usuario, "cubo_faces", true);
+    } else {
+      alert("Errado! São 6 faces.");
+      salvarProgresso(usuario, "cubo_faces", false);
+    }
+  }
+
+  // Salva progresso no localStorage
+  function salvarProgresso(usuario, desafioID, acertou) {
+    let progresso = JSON.parse(localStorage.getItem("progresso") || "{}");
+    if (!progresso[usuario]) progresso[usuario] = {};
+    progresso[usuario][desafioID] = acertou;
+    localStorage.setItem("progresso", JSON.stringify(progresso));
+  }
+</script>
+
 </body>
 </html>
