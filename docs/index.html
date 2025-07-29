@@ -4,14 +4,107 @@
   <meta charset="utf-8">
   <title>RA com Cubo e Login</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  
-  <!-- A-Frame + AR.js -->
+
+  <!-- A-Frame + AR.js + Extras -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
+  <script src="https://unpkg.com/aframe-gesture-detector@3.3.0/dist/aframe-gesture-detector.min.js"></script>
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #login {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    #login input {
+      margin: 8px;
+      padding: 10px;
+      font-size: 16px;
+      width: 220px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    #login button {
+      margin-top: 12px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 4px;
+    }
+
+    #painelInfo {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 30%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 20px;
+      display: none;
+      z-index: 5;
+    }
+
+    #painelInfo h3 {
+      margin-top: 0;
+    }
+
+    #painelInfo button {
+      margin-top: 10px;
+      padding: 10px;
+      background: #ff9800;
+      border: none;
+      color: white;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    #menuDesafios {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      z-index: 6;
+    }
+
+    #dropdown {
+      display: none;
+      background: white;
+      border: 1px solid #ccc;
+      padding: 10px;
+      border-radius: 6px;
+    }
+
+    #dropdown button {
+      background-color: #1976D2;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .numero {
+      cursor: pointer;
+    }
+  </style>
 </head>
 
 <body>
@@ -27,65 +120,64 @@
   <!-- PAINEL INFORMATIVO -->
   <div id="painelInfo">
     <h3>Informações</h3>
-    <p id="textoInfo">Toque em um número no cubo.</p>
+    <p id="textoInfo">Toque em uma bolinha do cubo.</p>
     <button onclick="abrirDesafios()">Desafios dessa figura</button>
   </div>
 
   <!-- DROPDOWN DE DESAFIOS -->
   <div id="menuDesafios">
-    <img width="40" height="40" src="https://img.icons8.com/office/40/trophy--v1.png" alt="trophy--v1"/>
+    <img width="40" height="40" src="https://img.icons8.com/office/40/trophy--v1.png" alt="trophy--v1" onclick="toggleDropdown()"/>
     <div id="dropdown">
       <button onclick="abrirDesafios()">Ir para Desafios</button>
     </div>
   </div>
 
-  <!-- CENA A-FRAME COM AR -->
-  <a-scene
-    embedded
-    renderer="logarithmicDepthBuffer: true;"
-    arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: false;"
-  >
-    <!-- Ativos do modelo -->
+  <!-- CENA A-FRAME -->
+  <a-scene embedded renderer="logarithmicDepthBuffer: true;"
+           arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: false;">
+    
     <a-assets>
       <a-asset-item id="modelo" src="Cubo.glb"></a-asset-item>
     </a-assets>
 
-    <!-- Marcador com modelo -->
     <a-marker preset="hiro">
+      <!-- Modelo manipulável -->
       <a-entity 
+        id="modeloCubo"
         gltf-model="#modelo"
         scale="0.5 0.5 0.5"
         position="0 0 0"
-        animation-mixer>
+        rotation="0 0 0"
+        gesture-detector>
       </a-entity>
 
-      <!-- Botões flutuantes com informações -->
-      <a-text value="1" position="-1 1.5 0" color="white"
-              geometry="primitive: plane; height: 0.4; width: 0.4"
-              material="color: red; opacity: 0.8"
-              class="botao" data-info="O cubo tem 6 faces quadradas."></a-text>
+      <!-- Bolinha 1 - Faces -->
+      <a-entity position="0 1.5 0" class="numero" data-info="O cubo tem 6 faces quadradas.">
+        <a-circle radius="0.25" color="#FF4136" position="0 0 0"></a-circle>
+        <a-text value="1" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
+      </a-entity>
 
-      <a-text value="2" position="0 1.5 0" color="white"
-              geometry="primitive: plane; height: 0.4; width: 0.4"
-              material="color: green; opacity: 0.8"
-              class="botao" data-info="O cubo tem 12 arestas."></a-text>
+      <!-- Bolinha 2 - Arestas -->
+      <a-entity position="0 -1.5 0" class="numero" data-info="O cubo tem 12 arestas.">
+        <a-circle radius="0.25" color="#2ECC40" position="0 0 0"></a-circle>
+        <a-text value="2" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
+      </a-entity>
 
-      <a-text value="3" position="1 1.5 0" color="white"
-              geometry="primitive: plane; height: 0.4; width: 0.4"
-              material="color: blue; opacity: 0.8"
-              class="botao" data-info="O cubo tem 8 vértices."></a-text>
+      <!-- Bolinha 3 - Vértices -->
+      <a-entity position="1.5 0 0" class="numero" data-info="O cubo tem 8 vértices.">
+        <a-circle radius="0.25" color="#0074D9" position="0 0 0"></a-circle>
+        <a-text value="3" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
+      </a-entity>
     </a-marker>
 
-    <!-- Câmera e iluminação -->
     <a-entity camera></a-entity>
     <a-light type="ambient" color="white" intensity="1"></a-light>
     <a-light type="directional" color="white" intensity="1.5" position="-1 1 1"></a-light>
     <a-light type="directional" color="white" intensity="1.5" position="1 1 1"></a-light>
   </a-scene>
 
-  <!-- SCRIPT JS -->
+  <!-- JS -->
   <script>
-    // Login
     function registrarOuEntrar() {
       const nome = document.getElementById("nome").value;
       const senha = document.getElementById("senha").value;
@@ -105,24 +197,11 @@
       document.getElementById("login").style.display = "none";
     }
 
-    // Mostrar informações do cubo
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll('.botao').forEach(botao => {
-        botao.addEventListener('click', function () {
-          const info = this.getAttribute('data-info');
-          document.getElementById("textoInfo").textContent = info;
-          document.getElementById("painelInfo").style.display = "block";
-        });
-      });
-    });
-
-    // Dropdown
     function toggleDropdown() {
       const drop = document.getElementById("dropdown");
       drop.style.display = drop.style.display === "none" ? "block" : "none";
     }
 
-    // Desafio
     function abrirDesafios() {
       const usuario = localStorage.getItem("usuarioAtual");
       const resposta = prompt("Quantas faces tem um cubo?");
@@ -135,14 +214,22 @@
       }
     }
 
-    // Salvar progresso
     function salvarProgresso(usuario, desafioID, acertou) {
       let progresso = JSON.parse(localStorage.getItem("progresso") || "{}");
       if (!progresso[usuario]) progresso[usuario] = {};
       progresso[usuario][desafioID] = acertou;
       localStorage.setItem("progresso", JSON.stringify(progresso));
     }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      document.querySelectorAll('.numero').forEach(el => {
+        el.addEventListener('click', function () {
+          const info = this.getAttribute('data-info');
+          document.getElementById("textoInfo").textContent = info;
+          document.getElementById("painelInfo").style.display = "block";
+        });
+      });
+    });
   </script>
 </body>
 </html>
-
