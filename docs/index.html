@@ -4,105 +4,55 @@
   <title>RA com Login e Desafios</title>
   <!-- A-Frame e AR.js -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.0.1/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.1.8/aframe/build/aframe-ar.min.js"></script>
   <style>
     body {
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 0;
-      background: #f4f4f4;
+      overflow: hidden;
     }
-    .login-container {
-      text-align: center;
-      padding: 20px;
-    }
-    .ar-container {
-      width: 100%;
-      height: 80vh;
-    }
-    .botoes-container {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .botao-info {
-      width: 40px;
-      height: 40px;
-      font-size: 18px;
-      font-weight: bold;
-      border-radius: 50%;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    #painelInfo {
-      background: #fff;
-      padding: 20px;
-      border: 2px solid #007bff;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    #infoPanel {
+      display: none;
       position: absolute;
-      top: 60px;
+      top: 20px;
       right: 20px;
-      width: 300px;
-      z-index: 999;
+      background-color: white;
+      padding: 20px;
+      z-index: 1000;
     }
-    #painelInfo button {
+    #infoPanel button {
       margin-top: 10px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      padding: 8px 12px;
-      border-radius: 5px;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
-  <div class="login-container">
-    <h2>Bem-vindo</h2>
-    <input type="text" id="nome" placeholder="Digite seu nome"><br><br>
-    <input type="password" id="senha" placeholder="Digite sua senha"><br><br>
-    <button onclick="registrarEntrada()">Entrar</button>
-  </div>  <div class="ar-container">
-    <a-scene embedded arjs>
-      <a-marker preset="hiro">
-        <a-box position='0 0.5 0' material='color: yellow;'></a-box>
-      </a-marker>
-      <a-entity camera></a-entity>
-    </a-scene>
-  </div>  <div class="botoes-container">
-    <button class="botao-info" onclick="mostrarInfo(1)">1</button>
-    <button class="botao-info" onclick="mostrarInfo(2)">2</button>
-    <button class="botao-info" onclick="mostrarInfo(3)">3</button>
-  </div>  <div id="painelInfo" style="display: none;"></div>  <script>
-    function registrarEntrada() {
-      const nome = document.getElementById('nome').value;
-      const senha = document.getElementById('senha').value;
-      console.log("Nome:", nome, "Senha:", senha);
-      alert("Entrada registrada para " + nome);
-    }
-
+  <a-scene embedded arjs>
+    <!-- Marcador com Cubo -->
+    <a-marker preset="hiro">
+      <a-box position='0 0.5 0' material='color: blue;'></a-box>
+    </a-marker>
+    <a-entity camera></a-entity>
+  </a-scene>  <!-- Painel de Informações -->  <div id="infoPanel">
+    <div id="infoText"></div>
+    <button onclick="fecharInfo()">Fechar</button>
+  </div>  <!-- Botões Numerados -->  <div style="position: absolute; top: 20px; left: 20px; z-index: 1000;">
+    <button onclick="mostrarInfo(1)">1</button>
+    <button onclick="mostrarInfo(2)">2</button>
+    <button onclick="mostrarInfo(3)">3</button>
+  </div>  <script>
     function mostrarInfo(numero) {
-      let info = "";
+      const infoText = document.getElementById('infoText');
       if (numero === 1) {
-        info = "<h3>Faces do Cubo</h3><p>O cubo possui 6 faces quadradas.</p>";
+        infoText.innerHTML = '<strong>Faces:</strong> O cubo possui 6 faces quadradas.';
       } else if (numero === 2) {
-        info = "<h3>Arestas do Cubo</h3><p>O cubo possui 12 arestas.</p>";
+        infoText.innerHTML = '<strong>Arestas:</strong> O cubo possui 12 arestas.';
       } else if (numero === 3) {
-        info = "<h3>Vértices do Cubo</h3><p>O cubo possui 8 vértices.</p>";
+        infoText.innerHTML = '<strong>Vértices:</strong> O cubo possui 8 vértices.';
       }
-      info += "<button onclick=\"fecharPainel()\">Fechar</button>";
-      const painel = document.getElementById("painelInfo");
-      painel.innerHTML = info;
-      painel.style.display = "block";
+      document.getElementById('infoPanel').style.display = 'block';
     }
 
-    function fecharPainel() {
-      const painel = document.getElementById("painelInfo");
-      painel.style.display = "none";
+    function fecharInfo() {
+      document.getElementById('infoPanel').style.display = 'none';
     }
   </script></body>
 </html>
