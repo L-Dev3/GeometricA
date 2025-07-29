@@ -1,224 +1,108 @@
-<!DOCTYPE html>
-<html lang="pt-br">
+<!DOCTYPE html><html>
 <head>
   <meta charset="utf-8">
-  <title>RA com Cubo e Login</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-
-  <!-- A-Frame + AR.js + Extras -->
+  <title>RA com Login e Desafios</title>
+  <!-- A-Frame e AR.js -->
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
-  <script src="https://unpkg.com/aframe-gesture-detector@3.3.0/dist/aframe-gesture-detector.min.js"></script>
-  <script src="https://unpkg.com/super-hands@3.0.1/dist/aframe-super-hands.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.0.1/aframe/build/aframe-ar.min.js"></script>
   <style>
     body {
-      margin: 0;
-      overflow: hidden;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
     }
-
-    #login {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      background: white;
+    .login-container {
+      text-align: center;
+      padding: 20px;
+    }
+    .ar-container {
+      width: 100%;
+      height: 80vh;
+    }
+    .botoes-container {
       display: flex;
-      flex-direction: column;
       justify-content: center;
-      align-items: center;
-      z-index: 10;
+      gap: 10px;
+      margin-top: 10px;
     }
-
-    #login input {
-      margin: 8px;
-      padding: 10px;
-      font-size: 16px;
-      width: 220px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-
-    #login button {
-      margin-top: 12px;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      background-color: #4CAF50;
+    .botao-info {
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      font-weight: bold;
+      border-radius: 50%;
+      background-color: #007bff;
       color: white;
       border: none;
-      border-radius: 4px;
+      cursor: pointer;
     }
-
     #painelInfo {
-      position: absolute;
-      top: 0;
-      right: 0;
-      width: 250px;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.85);
-      color: white;
+      background: #fff;
       padding: 20px;
-      display: none;
-      z-index: 5;
+      border: 2px solid #007bff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      position: absolute;
+      top: 60px;
+      right: 20px;
+      width: 300px;
+      z-index: 999;
     }
-
-    #painelInfo h3 {
-      margin-top: 0;
-    }
-
     #painelInfo button {
       margin-top: 10px;
-      padding: 10px;
-      background: #ff9800;
-      border: none;
-      color: white;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    #menuDesafios {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      z-index: 6;
-    }
-
-    #dropdown {
-      display: none;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 10px;
-      border-radius: 6px;
-    }
-
-    #dropdown button {
-      background-color: #1976D2;
+      background-color: #007bff;
       color: white;
       border: none;
       padding: 8px 12px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .numero {
+      border-radius: 5px;
       cursor: pointer;
     }
   </style>
 </head>
-
 <body>
-  <div id="login">
-    <h2>Entrar</h2>
-    <input id="nome" placeholder="Seu nome">
-    <input id="senha" type="password" placeholder="Senha">
-    <button onclick="registrarOuEntrar()">Entrar</button>
-  </div>
+  <div class="login-container">
+    <h2>Bem-vindo</h2>
+    <input type="text" id="nome" placeholder="Digite seu nome"><br><br>
+    <input type="password" id="senha" placeholder="Digite sua senha"><br><br>
+    <button onclick="registrarEntrada()">Entrar</button>
+  </div>  <div class="ar-container">
+    <a-scene embedded arjs>
+      <a-marker preset="hiro">
+        <a-box position='0 0.5 0' material='color: yellow;'></a-box>
+      </a-marker>
+      <a-entity camera></a-entity>
+    </a-scene>
+  </div>  <div class="botoes-container">
+    <button class="botao-info" onclick="mostrarInfo(1)">1</button>
+    <button class="botao-info" onclick="mostrarInfo(2)">2</button>
+    <button class="botao-info" onclick="mostrarInfo(3)">3</button>
+  </div>  <div id="painelInfo" style="display: none;"></div>  <script>
+    function registrarEntrada() {
+      const nome = document.getElementById('nome').value;
+      const senha = document.getElementById('senha').value;
+      console.log("Nome:", nome, "Senha:", senha);
+      alert("Entrada registrada para " + nome);
+    }
 
-  <div id="painelInfo">
-    <h3>Informações</h3>
-    <p id="textoInfo">Toque em uma bolinha do cubo.</p>
-    <button onclick="abrirDesafios()">Desafios dessa figura</button>
-  </div>
-
-  <div id="menuDesafios">
-    <img width="40" height="40" src="https://img.icons8.com/office/40/trophy--v1.png" alt="trophy--v1" onclick="toggleDropdown()"/>
-    <div id="dropdown">
-      <button onclick="abrirDesafios()">Ir para Desafios</button>
-    </div>
-  </div>
-
-  <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: false;">
-    <a-assets>
-      <a-asset-item id="modelo" src="Cubo.glb"></a-asset-item>
-    </a-assets>
-
-    <a-marker preset="hiro">
-      <a-entity id="modeloCubo"
-                gltf-model="#modelo"
-                scale="0.5 0.5 0.5"
-                position="0 0.5 0"
-                rotation="0 0 0"
-                gesture-detector
-                class="interativo"
-                grabbable draggable rotatable>
-      </a-entity>
-
-      <a-entity position="0 2 0" class="numero" data-info="O cubo tem 6 faces quadradas.">
-        <a-circle radius="0.25" color="#FF4136"></a-circle>
-        <a-text value="1" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
-      </a-entity>
-
-      <a-entity position="0 -2 0" class="numero" data-info="O cubo tem 12 arestas.">
-        <a-circle radius="0.25" color="#2ECC40"></a-circle>
-        <a-text value="2" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
-      </a-entity>
-
-      <a-entity position="2 0 0" class="numero" data-info="O cubo tem 8 vértices.">
-        <a-circle radius="0.25" color="#0074D9"></a-circle>
-        <a-text value="3" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
-      </a-entity>
-    </a-marker>
-
-    <a-entity camera></a-entity>
-    <a-light type="ambient" color="white" intensity="1"></a-light>
-    <a-light type="directional" color="white" intensity="1.5" position="-1 1 1"></a-light>
-    <a-light type="directional" color="white" intensity="1.5" position="1 1 1"></a-light>
-  </a-scene>
-
-  <script>
-    function registrarOuEntrar() {
-      const nome = document.getElementById("nome").value;
-      const senha = document.getElementById("senha").value;
-      let contas = JSON.parse(localStorage.getItem("contas") || "{}");
-
-      if (contas[nome]) {
-        if (contas[nome] !== senha) {
-          alert("Senha incorreta!");
-          return;
-        }
-      } else {
-        contas[nome] = senha;
-        localStorage.setItem("contas", JSON.stringify(contas));
+    function mostrarInfo(numero) {
+      let info = "";
+      if (numero === 1) {
+        info = "<h3>Faces do Cubo</h3><p>O cubo possui 6 faces quadradas.</p>";
+      } else if (numero === 2) {
+        info = "<h3>Arestas do Cubo</h3><p>O cubo possui 12 arestas.</p>";
+      } else if (numero === 3) {
+        info = "<h3>Vértices do Cubo</h3><p>O cubo possui 8 vértices.</p>";
       }
-
-      localStorage.setItem("usuarioAtual", nome);
-      document.getElementById("login").style.display = "none";
+      info += "<button onclick=\"fecharPainel()\">Fechar</button>";
+      const painel = document.getElementById("painelInfo");
+      painel.innerHTML = info;
+      painel.style.display = "block";
     }
 
-    function toggleDropdown() {
-      const drop = document.getElementById("dropdown");
-      drop.style.display = drop.style.display === "none" ? "block" : "none";
+    function fecharPainel() {
+      const painel = document.getElementById("painelInfo");
+      painel.style.display = "none";
     }
-
-    function abrirDesafios() {
-      const usuario = localStorage.getItem("usuarioAtual");
-      const resposta = prompt("Quantas faces tem um cubo?");
-      if (resposta === "6") {
-        alert("Correto!");
-        salvarProgresso(usuario, "cubo_faces", true);
-      } else {
-        alert("Errado! São 6 faces.");
-        salvarProgresso(usuario, "cubo_faces", false);
-      }
-    }
-
-    function salvarProgresso(usuario, desafioID, acertou) {
-      let progresso = JSON.parse(localStorage.getItem("progresso") || "{}");
-      if (!progresso[usuario]) progresso[usuario] = {};
-      progresso[usuario][desafioID] = acertou;
-      localStorage.setItem("progresso", JSON.stringify(progresso));
-    }
-
-    document.addEventListener("DOMContentLoaded", () => {
-      document.querySelectorAll('.numero').forEach(el => {
-        el.addEventListener('click', function () {
-          const info = this.getAttribute('data-info');
-          document.getElementById("textoInfo").textContent = info;
-          document.getElementById("painelInfo").style.display = "block";
-        });
-      });
-    });
-  </script>
-</body>
+  </script></body>
 </html>
