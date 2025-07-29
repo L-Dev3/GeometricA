@@ -10,7 +10,7 @@
   <script src="https://cdn.jsdelivr.net/gh/AR-js-org/AR.js/aframe/build/aframe-ar.min.js"></script>
   <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@v6.1.1/dist/aframe-extras.min.js"></script>
   <script src="https://unpkg.com/aframe-gesture-detector@3.3.0/dist/aframe-gesture-detector.min.js"></script>
-
+  <script src="https://unpkg.com/super-hands@3.0.1/dist/aframe-super-hands.min.js"></script>
   <style>
     body {
       margin: 0;
@@ -54,7 +54,7 @@
       position: absolute;
       top: 0;
       right: 0;
-      width: 30%;
+      width: 250px;
       height: 100%;
       background-color: rgba(0, 0, 0, 0.85);
       color: white;
@@ -108,8 +108,6 @@
 </head>
 
 <body>
-
-  <!-- LOGIN -->
   <div id="login">
     <h2>Entrar</h2>
     <input id="nome" placeholder="Seu nome">
@@ -117,14 +115,12 @@
     <button onclick="registrarOuEntrar()">Entrar</button>
   </div>
 
-  <!-- PAINEL INFORMATIVO -->
   <div id="painelInfo">
     <h3>Informações</h3>
     <p id="textoInfo">Toque em uma bolinha do cubo.</p>
     <button onclick="abrirDesafios()">Desafios dessa figura</button>
   </div>
 
-  <!-- DROPDOWN DE DESAFIOS -->
   <div id="menuDesafios">
     <img width="40" height="40" src="https://img.icons8.com/office/40/trophy--v1.png" alt="trophy--v1" onclick="toggleDropdown()"/>
     <div id="dropdown">
@@ -132,40 +128,34 @@
     </div>
   </div>
 
-  <!-- CENA A-FRAME -->
-  <a-scene embedded renderer="logarithmicDepthBuffer: true;"
-           arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: false;">
-    
+  <a-scene embedded arjs="sourceType: webcam; detectionMode: mono; debugUIEnabled: false;">
     <a-assets>
       <a-asset-item id="modelo" src="Cubo.glb"></a-asset-item>
     </a-assets>
 
     <a-marker preset="hiro">
-      <!-- Modelo manipulável -->
-      <a-entity 
-        id="modeloCubo"
-        gltf-model="#modelo"
-        scale="0.5 0.5 0.5"
-        position="0 0 0"
-        rotation="0 0 0"
-        gesture-detector>
+      <a-entity id="modeloCubo"
+                gltf-model="#modelo"
+                scale="0.5 0.5 0.5"
+                position="0 0.5 0"
+                rotation="0 0 0"
+                gesture-detector
+                class="interativo"
+                grabbable draggable rotatable>
       </a-entity>
 
-      <!-- Bolinha 1 - Faces -->
-      <a-entity position="0 1.5 0" class="numero" data-info="O cubo tem 6 faces quadradas.">
-        <a-circle radius="0.25" color="#FF4136" position="0 0 0"></a-circle>
+      <a-entity position="0 2 0" class="numero" data-info="O cubo tem 6 faces quadradas.">
+        <a-circle radius="0.25" color="#FF4136"></a-circle>
         <a-text value="1" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
       </a-entity>
 
-      <!-- Bolinha 2 - Arestas -->
-      <a-entity position="0 -1.5 0" class="numero" data-info="O cubo tem 12 arestas.">
-        <a-circle radius="0.25" color="#2ECC40" position="0 0 0"></a-circle>
+      <a-entity position="0 -2 0" class="numero" data-info="O cubo tem 12 arestas.">
+        <a-circle radius="0.25" color="#2ECC40"></a-circle>
         <a-text value="2" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
       </a-entity>
 
-      <!-- Bolinha 3 - Vértices -->
-      <a-entity position="1.5 0 0" class="numero" data-info="O cubo tem 8 vértices.">
-        <a-circle radius="0.25" color="#0074D9" position="0 0 0"></a-circle>
+      <a-entity position="2 0 0" class="numero" data-info="O cubo tem 8 vértices.">
+        <a-circle radius="0.25" color="#0074D9"></a-circle>
         <a-text value="3" align="center" color="#fff" position="0 0 0.01" scale="0.8 0.8 0.8"></a-text>
       </a-entity>
     </a-marker>
@@ -176,7 +166,6 @@
     <a-light type="directional" color="white" intensity="1.5" position="1 1 1"></a-light>
   </a-scene>
 
-  <!-- JS -->
   <script>
     function registrarOuEntrar() {
       const nome = document.getElementById("nome").value;
