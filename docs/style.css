@@ -1,11 +1,11 @@
-
+/* Reset básico */
 body {
   margin: 0;
   overflow: hidden;
   font-family: Arial, sans-serif;
 }
 
-/* Tela de login */
+/* LOGIN */
 #login {
   position: absolute;
   top: 0; left: 0;
@@ -19,33 +19,59 @@ body {
 }
 
 #login input {
-  margin: 5px;
+  margin: 8px;
   padding: 10px;
   font-size: 16px;
-  width: 200px;
+  width: 220px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
 }
 
 #login button {
+  margin-top: 12px;
   padding: 10px 20px;
   font-size: 16px;
-  margin-top: 10px;
+  cursor: pointer;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 4px;
 }
 
-/* Painel lateral */
+#login h2 {
+  margin-bottom: 15px;
+}
+
+/* PAINEL INFORMATIVO */
 #painelInfo {
   position: absolute;
-  right: 0;
   top: 0;
+  right: 0;
   width: 30%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  background-color: rgba(0, 0, 0, 0.85);
   color: white;
-  padding: 15px;
+  padding: 20px;
   display: none;
   z-index: 5;
 }
 
-/* Botão de menu/desafios */
+#painelInfo h3 {
+  margin-top: 0;
+}
+
+#painelInfo button {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 14px;
+  cursor: pointer;
+  background-color: #ff9800;
+  border: none;
+  color: white;
+  border-radius: 4px;
+}
+
+/* DROPDOWN DE DESAFIOS */
 #menuDesafios {
   position: absolute;
   top: 10px;
@@ -55,13 +81,24 @@ body {
 
 #menuDesafios img {
   width: 40px;
+  height: 40px;
   cursor: pointer;
 }
 
 #dropdown {
   display: none;
+  margin-top: 5px;
   background: white;
   border: 1px solid #ccc;
   padding: 10px;
-  margin-top: 5px;
+  border-radius: 6px;
+}
+
+#dropdown button {
+  background-color: #1976D2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
 }
